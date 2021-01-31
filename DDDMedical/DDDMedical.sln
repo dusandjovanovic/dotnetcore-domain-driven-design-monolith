@@ -1,0 +1,58 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DDDMedical.Application", "DDDMedical.Application\DDDMedical.Application.csproj", "{60FD9FAE-E1E4-4FEB-8B2B-37A119FE2B46}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DDDMedical.Domain", "DDDMedical.Domain\DDDMedical.Domain.csproj", "{C6B489E7-8B54-46FC-9371-B7BB9D935D59}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DDDMedical.Domain.Core", "DDDMedical.Domain.Core\DDDMedical.Domain.Core.csproj", "{7CFC2CD9-5BCC-4989-8960-A664B45704F1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DDDMedical.Infrastructure.Bus", "DDDMedical.Infrastructure.Bus\DDDMedical.Infrastructure.Bus.csproj", "{13F49FF8-2CC7-47F2-8E82-64455BF604BC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DDDMedical.Infrastructure.Identity", "DDDMedical.Infrastructure.Identity\DDDMedical.Infrastructure.Identity.csproj", "{F7598656-8421-4B5D-A1CD-7293D9348BA0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DDDMedical.Infrastructure.IoC", "DDDMedical.Infrastructure.IoC\DDDMedical.Infrastructure.IoC.csproj", "{4A363943-9B03-462C-86E6-349B60A40B72}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DDDMedical.Infrastructure.Data", "DDDMedical.Infrastructure.Data\DDDMedical.Infrastructure.Data.csproj", "{1F6B431E-2613-44DD-AFFD-6D043076733A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DDDMedical.API", "DDDMedical.API\DDDMedical.API.csproj", "{666553B5-DE2B-472D-8CDF-68C13F3FDA03}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{60FD9FAE-E1E4-4FEB-8B2B-37A119FE2B46}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{60FD9FAE-E1E4-4FEB-8B2B-37A119FE2B46}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{60FD9FAE-E1E4-4FEB-8B2B-37A119FE2B46}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{60FD9FAE-E1E4-4FEB-8B2B-37A119FE2B46}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C6B489E7-8B54-46FC-9371-B7BB9D935D59}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C6B489E7-8B54-46FC-9371-B7BB9D935D59}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C6B489E7-8B54-46FC-9371-B7BB9D935D59}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C6B489E7-8B54-46FC-9371-B7BB9D935D59}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7CFC2CD9-5BCC-4989-8960-A664B45704F1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7CFC2CD9-5BCC-4989-8960-A664B45704F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7CFC2CD9-5BCC-4989-8960-A664B45704F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7CFC2CD9-5BCC-4989-8960-A664B45704F1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{13F49FF8-2CC7-47F2-8E82-64455BF604BC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{13F49FF8-2CC7-47F2-8E82-64455BF604BC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{13F49FF8-2CC7-47F2-8E82-64455BF604BC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{13F49FF8-2CC7-47F2-8E82-64455BF604BC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F7598656-8421-4B5D-A1CD-7293D9348BA0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F7598656-8421-4B5D-A1CD-7293D9348BA0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F7598656-8421-4B5D-A1CD-7293D9348BA0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F7598656-8421-4B5D-A1CD-7293D9348BA0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4A363943-9B03-462C-86E6-349B60A40B72}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4A363943-9B03-462C-86E6-349B60A40B72}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4A363943-9B03-462C-86E6-349B60A40B72}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4A363943-9B03-462C-86E6-349B60A40B72}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1F6B431E-2613-44DD-AFFD-6D043076733A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1F6B431E-2613-44DD-AFFD-6D043076733A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1F6B431E-2613-44DD-AFFD-6D043076733A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1F6B431E-2613-44DD-AFFD-6D043076733A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{666553B5-DE2B-472D-8CDF-68C13F3FDA03}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{666553B5-DE2B-472D-8CDF-68C13F3FDA03}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{666553B5-DE2B-472D-8CDF-68C13F3FDA03}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{666553B5-DE2B-472D-8CDF-68C13F3FDA03}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
