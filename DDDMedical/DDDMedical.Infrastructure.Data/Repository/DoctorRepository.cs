@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using DDDMedical.Domain.Interfaces;
 using DDDMedical.Domain.Models;
@@ -13,6 +14,16 @@ namespace DDDMedical.Infrastructure.Data.Repository
         public Doctor GetByEmail(string email)
         {
             return _dbSet.AsNoTracking().FirstOrDefault(c => c.Email == email);
+        }
+
+        public bool IsDoctorPulmonologist(Guid doctorId)
+        {
+            return _dbSet.Find(doctorId).Roles.Contains(Role.Pulmonologist);
+        }
+
+        public bool IsDoctorReservedByHour(Guid doctorId, DateTime reservationDate)
+        {
+            return _dbSet.Find(doctorId).Reservations.TrueForAll(d => d.Date != reservationDate.Date || d.Hour != reservationDate.Hour);
         }
     }
 }

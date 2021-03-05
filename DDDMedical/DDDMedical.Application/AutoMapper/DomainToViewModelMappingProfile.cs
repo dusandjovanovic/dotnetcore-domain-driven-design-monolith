@@ -9,6 +9,11 @@ namespace DDDMedical.Application.AutoMapper
         public DomainToViewModelMappingProfile()
         {
             CreateMap<Customer, CustomerViewModel>();
+            CreateMap<Consultation, ConsultationViewModel>();
+            CreateMap<Doctor, DoctorViewModel>();
+            CreateMap<Patient, PatientViewModel>();
+            CreateMap<TreatmentRoom, TreatmentRoomViewModel>();
+            CreateMap<TreatmentMachine, TreatmentMachineViewModel>();
         }
     }
 }

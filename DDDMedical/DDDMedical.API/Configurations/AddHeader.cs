@@ -9,9 +9,9 @@ namespace DDDMedical.API.Configurations
         {
             operation.Parameters.Add(new OpenApiParameter()
             {
-                Name = "CustomHeader",
+                Name = "DDDMedical.Header",
                 In = ParameterLocation.Header,
-                Required = true
+                Required = false
             });
         }
     }
