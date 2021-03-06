@@ -11,93 +11,93 @@ using Microsoft.AspNetCore.Mvc;
 namespace DDDMedical.API.Controllers
 {
     [Authorize]
-    public class CustomerController : ApiController
+    public class DoctorController : ApiController
     {
-        private readonly ICustomerAppService _customerAppService;
+        private readonly IDoctorService _doctorService;
 
-        public CustomerController(
-            ICustomerAppService customerAppService,
+        public DoctorController(
+            IDoctorService doctorService,
             INotificationHandler<DomainNotification> notifications,
             IMediatorHandler mediator) : base(notifications, mediator)
         {
-            _customerAppService = customerAppService;
+            _doctorService = doctorService;
         }
 
         [HttpGet]
         [AllowAnonymous]
-        [Route("customer-management")]
+        [Route("doctor-management")]
         public IActionResult Get()
         {
-            return Response(_customerAppService.GetAll());
+            return Response(_doctorService.GetAll());
         }
 
         [HttpGet]
         [AllowAnonymous]
-        [Route("customer-management/{id:guid}")]
+        [Route("doctor-management/{id:guid}")]
         public IActionResult Get(Guid id)
         {
-            var customerViewModel = _customerAppService.GetById(id);
+            var customerViewModel = _doctorService.GetById(id);
 
             return Response(customerViewModel);
         }
-
+        
         [HttpPost]
-        [Authorize(Policy = "CanWriteCustomerData", Roles = Roles.Admin)]
-        [Route("customer-management")]
-        public IActionResult Post([FromBody]CustomerViewModel customerViewModel)
+        [Authorize(Policy = "CanWriteDoctorData", Roles = Roles.Admin)]
+        [Route("doctor-management")]
+        public IActionResult Post([FromBody]DoctorViewModel doctorViewModel)
         {
             if (!ModelState.IsValid)
             {
                 NotifyModelStateErrors();
-                return Response(customerViewModel);
+                return Response(doctorViewModel);
             }
 
-            _customerAppService.Register(customerViewModel);
+            _doctorService.Register(doctorViewModel);
 
-            return Response(customerViewModel);
+            return Response(doctorViewModel);
         }
-
+        
         [HttpPut]
         [Authorize(Policy = "CanWriteCustomerData", Roles = Roles.Admin)]
-        [Route("customer-management")]
-        public IActionResult Put([FromBody]CustomerViewModel customerViewModel)
+        [Route("doctor-management")]
+        public IActionResult Put([FromBody]DoctorViewModel doctorViewModel)
         {
             if (!ModelState.IsValid)
             {
                 NotifyModelStateErrors();
-                return Response(customerViewModel);
+                return Response(doctorViewModel);
             }
 
-            _customerAppService.Update(customerViewModel);
+            _doctorService.Reserve(doctorViewModel);
 
-            return Response(customerViewModel);
+            return Response(doctorViewModel);
         }
 
         [HttpDelete]
-        [Authorize(Policy = "CanRemoveCustomerData", Roles = Roles.Admin)]
-        [Route("customer-management")]
+        [Authorize(Policy = "CanRemoveDoctorData", Roles = Roles.Admin)]
+        [Route("doctor-management")]
         public IActionResult Delete(Guid id)
         {
-            _customerAppService.Remove(id);
+            _doctorService.Remove(id);
 
             return Response();
         }
 
         [HttpGet]
         [AllowAnonymous]
-        [Route("customer-management/history/{id:guid}")]
+        [Route("doctor-management/history/{id:guid}")]
         public IActionResult History(Guid id)
         {
-            var customerHistoryData = _customerAppService.GetAllHistory(id);
+            var customerHistoryData = _doctorService.GetAllHistory(id);
             return Response(customerHistoryData);
         }
 
         [HttpGet]
         [AllowAnonymous]
-        [Route("customer-management/pagination")]
+        [Route("doctor-management/pagination")]
         public IActionResult Pagination(int skip, int take)
         {
-            return Response(_customerAppService.GetAll(skip, take));
+            return Response(_doctorService.GetAll(skip, take));
         }
     }
 }

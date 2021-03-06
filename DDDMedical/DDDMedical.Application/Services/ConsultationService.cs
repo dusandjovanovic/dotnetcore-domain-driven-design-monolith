@@ -17,16 +17,14 @@ namespace DDDMedical.Application.Services
     {
         private readonly IMapper _mapper;
         private readonly IConsultationRepository _consultationRepository;
-        private readonly IDoctorRepository _doctorRepository;
         private readonly IEventStoreRepository _eventStoreRepository;
         private readonly IMediatorHandler _mediator;
 
         public ConsultationService(IMapper mapper, IConsultationRepository consultationRepository, 
-            IDoctorRepository doctorRepository, IMediatorHandler mediator, IEventStoreRepository eventStoreRepository)
+            IMediatorHandler mediator, IEventStoreRepository eventStoreRepository)
         {
             _mapper = mapper;
             _consultationRepository = consultationRepository;
-            _doctorRepository = doctorRepository;
             _eventStoreRepository = eventStoreRepository;
             _mediator = mediator;
         }
@@ -34,11 +32,7 @@ namespace DDDMedical.Application.Services
         public void Register(ConsultationViewModel consultationViewModel)
         {
             var registerConsultationCommand = _mapper.Map<RegisterConsultationCommand>(consultationViewModel);
-            if (_doctorRepository.IsDoctorReservedByHour(consultationViewModel.DoctorId,
-                consultationViewModel.ConsultationDate))
-            {
-                _mediator.SendCommand(registerConsultationCommand);
-            }
+            _mediator.SendCommand(registerConsultationCommand);
         }
 
         public IEnumerable<ConsultationViewModel> GetAll()
