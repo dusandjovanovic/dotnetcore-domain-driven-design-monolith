@@ -10,7 +10,7 @@ namespace DDDMedical.Application.EventSourcedNormalizers.Consultation
     {
         public static IList<ConsultationHistoryData> HistoryData { get; set; }
 
-        public static IList<ConsultationHistoryData> ToJavaScriptCustomerHistory(IList<StoredEvent> storedEvents)
+        public static IList<ConsultationHistoryData> ToJavaScriptHistory(IList<StoredEvent> storedEvents)
         {
             HistoryData = new List<ConsultationHistoryData>();
             HistoryDeserializer(storedEvents);

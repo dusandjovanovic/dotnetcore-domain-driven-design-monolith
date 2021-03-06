@@ -13,11 +13,6 @@ namespace DDDMedical.Application.AutoMapper
     {
         public ViewModelToDomainMappingProfile()
         {
-            CreateMap<CustomerViewModel, RegisterNewCustomerCommand>()
-                .ConstructUsing(c => new RegisterNewCustomerCommand(c.Name, c.Email, c.BirthDate));
-            CreateMap<CustomerViewModel, UpdateCustomerCommand>()
-                .ConstructUsing(c => new UpdateCustomerCommand(c.Id, c.Name, c.Email, c.BirthDate));
-
             CreateMap<ConsultationViewModel, RegisterConsultationCommand>()
                 .ConstructUsing(c => new RegisterConsultationCommand(c.Id, c.PatientId, c.DoctorId, c.TreatmentRoomId,
                     c.RegistrationDate, c.ConsultationDate));

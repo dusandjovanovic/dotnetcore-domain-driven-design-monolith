@@ -27,14 +27,9 @@ namespace DDDMedical.API.Controllers
                 NotifyModelStateErrors();
                 return Response(model);
             }
-
-            // Add Role
+            
             var role = new IdentityRole(model.Name);
             await _roleManager.CreateAsync(role);
-
-            // Add RoleClaims
-            // var roleClaim = new Claim("Customers", "Write");
-            // await _roleManager.AddClaimAsync(role, roleClaim);
 
             return Response();
         }

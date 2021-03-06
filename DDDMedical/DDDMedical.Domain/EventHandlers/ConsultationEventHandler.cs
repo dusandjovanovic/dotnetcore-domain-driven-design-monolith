@@ -1,15 +1,15 @@
 using System.Threading;
 using System.Threading.Tasks;
-using DDDMedical.Domain.Events;
+using DDDMedical.Domain.Events.Consultation;
 using MediatR;
 
 namespace DDDMedical.Domain.EventHandlers
 {
-    public class ConsultationEventHandler : INotificationHandler<CustomerRegisteredEvent>
+    public class ConsultationEventHandler : INotificationHandler<ConsultationRegisteredEvent>
     {
-        public Task Handle(CustomerRegisteredEvent notification, CancellationToken cancellationToken)
+        public Task Handle(ConsultationRegisteredEvent notification, CancellationToken cancellationToken)
         {
-            return Task.CompletedTask;
+            throw new System.NotImplementedException();
         }
     }
 }

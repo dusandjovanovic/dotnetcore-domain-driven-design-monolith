@@ -15,11 +15,19 @@ namespace DDDMedical.Infrastructure.Data.Context
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) {}
         
-        public DbSet<Customer> Customers { get; set; }
+        public DbSet<Consultation> Consultations { get; set; }
+        public DbSet<Doctor> Doctors { get; set; }
+        public DbSet<Patient> Patients { get; set; }
+        public DbSet<TreatmentMachine> TreatmentMachines { get; set; }
+        public DbSet<TreatmentRoom> TreatmentRooms { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.ApplyConfiguration(new CustomerMap());
+            modelBuilder.ApplyConfiguration(new ConsultationMap());
+            modelBuilder.ApplyConfiguration(new DoctorMap());
+            modelBuilder.ApplyConfiguration(new PatientMap());
+            modelBuilder.ApplyConfiguration(new TreatmentMachineMap());
+            modelBuilder.ApplyConfiguration(new TreatmentRoomMap());
             base.OnModelCreating(modelBuilder);
         }
 

@@ -60,18 +60,15 @@ namespace DDDMedical.API.Controllers
                 NotifyModelStateErrors();
                 return Response();
             }
-
-            // Sign In
+            
             var signInResult = await _signInManager.PasswordSignInAsync(model.Email, model.Password, false, true);
             if (!signInResult.Succeeded)
             {
                 NotifyError(signInResult.ToString(), "Login failure");
                 return Response();
             }
-
-            // Get User
+            
             var appUser = await _userManager.FindByEmailAsync(model.Email);
-            //var appUser = _userManager.Users.SingleOrDefault(r => r.Email == model.Email);
 
             _logger.LogInformation(1, "User logged in.");
             return Response(await GenerateToken(appUser));
@@ -87,8 +84,7 @@ namespace DDDMedical.API.Controllers
                 NotifyModelStateErrors();
                 return Response();
             }
-
-            // Add User
+            
             var appUser = new ApplicationUser { UserName = model.Email, Email = model.Email };
             var identityResult = await _userManager.CreateAsync(appUser, model.Password);
             if (!identityResult.Succeeded)
@@ -96,20 +92,26 @@ namespace DDDMedical.API.Controllers
                 AddIdentityErrors(identityResult);
                 return Response();
             }
-
-            // Add UserRoles
+            
             identityResult = await _userManager.AddToRoleAsync(appUser, "Admin");
             if (!identityResult.Succeeded)
             {
                 AddIdentityErrors(identityResult);
                 return Response();
             }
-
-            // Add UserClaims
+            
             var userClaims = new List<Claim>
             {
-                new Claim("Customers_Write", "Write"),
-                new Claim("Customers_Remove", "Remove"),
+                new Claim("Consultations_Write", "Write"),
+                new Claim("Consultations_Remove", "Remove"),
+                new Claim("Doctors_Write", "Write"),
+                new Claim("Doctors_Remove", "Remove"),
+                new Claim("Patients_Write", "Write"),
+                new Claim("Patients_Remove", "Remove"),
+                new Claim("TreatmentRooms_Write", "Write"),
+                new Claim("TreatmentRooms_Remove", "Remove"),
+                new Claim("TreatmentMachines_Write", "Write"),
+                new Claim("TreatmentMachines_Remove", "Remove"),
             };
             await _userManager.AddClaimsAsync(appUser, userClaims);
 
@@ -130,8 +132,7 @@ namespace DDDMedical.API.Controllers
                 NotifyModelStateErrors();
                 return Response();
             }
-
-            // Get current RefreshToken
+            
             var refreshTokenCurrent = _dbContext.RefreshTokens.SingleOrDefault
                 (x => x.Token == model.RefreshToken && !x.Used && !x.Invalidated);
             if (refreshTokenCurrent is null)
@@ -141,26 +142,19 @@ namespace DDDMedical.API.Controllers
             }
             if (refreshTokenCurrent.ExpiryDate < DateTime.UtcNow)
             {
-                // Update current RefreshToken
                 refreshTokenCurrent.Invalidated = true;
                 await _dbContext.SaveChangesAsync();
                 NotifyError("RefreshToken", "Refresh token invalid");
                 return Response();
             }
-
-            // Get User
+            
             var appUser = await _userManager.FindByIdAsync(refreshTokenCurrent.UserId);
             if (appUser is null)
             {
                 NotifyError("User", "User does not exist");
                 return Response();
             }
-
-            // Remove current RefreshToken
-            //_dbContext.Remove(refreshTokenCurrent);
-            //await _dbContext.SaveChangesAsync();
-
-            // Update current RefreshToken
+            
             refreshTokenCurrent.Used = true;
             await _dbContext.SaveChangesAsync();
 
@@ -180,32 +174,25 @@ namespace DDDMedical.API.Controllers
 
         private async Task<TokenViewModel> GenerateToken(ApplicationUser appUser)
         {
-            // Init ClaimsIdentity
             var claimsIdentity = new ClaimsIdentity();
             claimsIdentity.AddClaim(new Claim(JwtRegisteredClaimNames.Email, appUser.Email));
             claimsIdentity.AddClaim(new Claim(ClaimTypes.NameIdentifier, appUser.Id));
-
-            // Get UserClaims
+            
             var userClaims = await _userManager.GetClaimsAsync(appUser);
             claimsIdentity.AddClaims(userClaims);
-
-            // Get UserRoles
+            
             var userRoles = await _userManager.GetRolesAsync(appUser);
             claimsIdentity.AddClaims(userRoles.Select(role => new Claim(ClaimsIdentity.DefaultRoleClaimType, role)));
-            // ClaimsIdentity.DefaultRoleClaimType & ClaimTypes.Role is the same
-
-            // Get RoleClaims
+            
             foreach (var userRole in userRoles)
             {
                 var role = await _roleManager.FindByNameAsync(userRole);
                 var roleClaims = await _roleManager.GetClaimsAsync(role);
                 claimsIdentity.AddClaims(roleClaims);
             }
-
-            // Generate access token
+            
             var jwtToken = await _jwtFactory.GenerateJwtToken(claimsIdentity);
-
-            // Add refresh token
+            
             var refreshToken = new RefreshToken
             {
                 Token = Guid.NewGuid().ToString("N"),
@@ -214,6 +201,7 @@ namespace DDDMedical.API.Controllers
                 ExpiryDate = DateTime.UtcNow.AddMinutes(90),
                 JwtId = jwtToken.JwtId
             };
+            
             await _dbContext.RefreshTokens.AddAsync(refreshToken);
             await _dbContext.SaveChangesAsync();
 
