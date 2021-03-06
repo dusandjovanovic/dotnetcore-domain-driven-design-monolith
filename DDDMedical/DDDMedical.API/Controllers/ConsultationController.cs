@@ -1,5 +1,6 @@
 using System;
 using DDDMedical.Application.Interfaces;
+using DDDMedical.Application.ViewModels;
 using DDDMedical.Domain.Core.Bus;
 using DDDMedical.Domain.Core.Notifications;
 using DDDMedical.Infrastructure.Identity.Authorization;
@@ -38,6 +39,22 @@ namespace DDDMedical.API.Controllers
             var customerViewModel = _consultationService.GetById(id);
 
             return Response(customerViewModel);
+        }
+        
+        [HttpPost]
+        [Authorize(Policy = "CanWriteConsultationData", Roles = Roles.Admin)]
+        [Route("consultation-management")]
+        public IActionResult Post([FromBody]ConsultationViewModel consultationViewModel)
+        {
+            if (!ModelState.IsValid)
+            {
+                NotifyModelStateErrors();
+                return Response(consultationViewModel);
+            }
+
+            _consultationService.Register(consultationViewModel);
+
+            return Response(consultationViewModel);
         }
 
         [HttpGet]

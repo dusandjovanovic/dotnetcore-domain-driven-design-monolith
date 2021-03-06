@@ -1,5 +1,6 @@
 using System;
 using DDDMedical.Application.Interfaces;
+using DDDMedical.Application.ViewModels;
 using DDDMedical.Domain.Core.Bus;
 using DDDMedical.Domain.Core.Notifications;
 using DDDMedical.Infrastructure.Identity.Authorization;
@@ -38,6 +39,38 @@ namespace DDDMedical.API.Controllers
             var customerViewModel = _patientService.GetById(id);
 
             return Response(customerViewModel);
+        }
+        
+        [HttpPost]
+        [Authorize(Policy = "CanWritePatientData", Roles = Roles.Admin)]
+        [Route("patient-management/covid")]
+        public IActionResult PostCovid([FromBody]PatientViewModel patientViewModel)
+        {
+            if (!ModelState.IsValid)
+            {
+                NotifyModelStateErrors();
+                return Response(patientViewModel);
+            }
+
+            _patientService.RegisterCovid(patientViewModel);
+
+            return Response(patientViewModel);
+        }
+        
+        [HttpPost]
+        [Authorize(Policy = "CanWritePatientData", Roles = Roles.Admin)]
+        [Route("patient-management/influenza")]
+        public IActionResult PostInfluenza([FromBody]PatientViewModel patientViewModel)
+        {
+            if (!ModelState.IsValid)
+            {
+                NotifyModelStateErrors();
+                return Response(patientViewModel);
+            }
+
+            _patientService.RegisterFlu(patientViewModel);
+
+            return Response(patientViewModel);
         }
 
         [HttpDelete]

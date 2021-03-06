@@ -58,7 +58,7 @@ namespace DDDMedical.API.Controllers
         }
         
         [HttpPut]
-        [Authorize(Policy = "CanWriteCustomerData", Roles = Roles.Admin)]
+        [Authorize(Policy = "CanWriteDoctorData", Roles = Roles.Admin)]
         [Route("doctor-management")]
         public IActionResult Put([FromBody]DoctorViewModel doctorViewModel)
         {

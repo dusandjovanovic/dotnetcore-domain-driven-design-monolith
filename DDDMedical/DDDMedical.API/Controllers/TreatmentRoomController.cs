@@ -1,5 +1,6 @@
 using System;
 using DDDMedical.Application.Interfaces;
+using DDDMedical.Application.ViewModels;
 using DDDMedical.Domain.Core.Bus;
 using DDDMedical.Domain.Core.Notifications;
 using DDDMedical.Infrastructure.Identity.Authorization;
@@ -38,6 +39,54 @@ namespace DDDMedical.API.Controllers
             var customerViewModel = _treatmentRoomService.GetById(id);
 
             return Response(customerViewModel);
+        }
+        
+        [HttpPost]
+        [Authorize(Policy = "CanWriteTreatmentRoomData", Roles = Roles.Admin)]
+        [Route("room-management")]
+        public IActionResult PostAdvanced([FromBody]TreatmentRoomViewModel treatmentRoomViewModel)
+        {
+            if (!ModelState.IsValid)
+            {
+                NotifyModelStateErrors();
+                return Response(treatmentRoomViewModel);
+            }
+
+            _treatmentRoomService.Register(treatmentRoomViewModel);
+
+            return Response(treatmentRoomViewModel);
+        }
+        
+        [HttpPut]
+        [Authorize(Policy = "CanWriteTreatmentRoomData", Roles = Roles.Admin)]
+        [Route("room-management/equip")]
+        public IActionResult PutEquip([FromBody]TreatmentRoomViewModel treatmentRoomViewModel)
+        {
+            if (!ModelState.IsValid)
+            {
+                NotifyModelStateErrors();
+                return Response(treatmentRoomViewModel);
+            }
+
+            _treatmentRoomService.Equip(treatmentRoomViewModel);
+
+            return Response(treatmentRoomViewModel);
+        }
+        
+        [HttpPut]
+        [Authorize(Policy = "CanWriteTreatmentRoomData", Roles = Roles.Admin)]
+        [Route("room-management/reserve")]
+        public IActionResult PutReserve([FromBody]TreatmentRoomViewModel treatmentRoomViewModel)
+        {
+            if (!ModelState.IsValid)
+            {
+                NotifyModelStateErrors();
+                return Response(treatmentRoomViewModel);
+            }
+
+            _treatmentRoomService.Reserve(treatmentRoomViewModel);
+
+            return Response(treatmentRoomViewModel);
         }
 
         [HttpDelete]

@@ -1,7 +1,9 @@
 using System;
 using DDDMedical.Application.Interfaces;
+using DDDMedical.Application.ViewModels;
 using DDDMedical.Domain.Core.Bus;
 using DDDMedical.Domain.Core.Notifications;
+using DDDMedical.Infrastructure.Identity.Authorization;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -37,6 +39,38 @@ namespace DDDMedical.API.Controllers
             var customerViewModel = _treatmentMachineService.GetById(id);
 
             return Response(customerViewModel);
+        }
+        
+        [HttpPost]
+        [Authorize(Policy = "CanWriteTreatmentMachineData", Roles = Roles.Admin)]
+        [Route("machine-management/simple")]
+        public IActionResult PostSimple([FromBody]TreatmentMachineViewModel treatmentMachineViewModel)
+        {
+            if (!ModelState.IsValid)
+            {
+                NotifyModelStateErrors();
+                return Response(treatmentMachineViewModel);
+            }
+
+            _treatmentMachineService.RegisterSimple(treatmentMachineViewModel);
+
+            return Response(treatmentMachineViewModel);
+        }
+        
+        [HttpPost]
+        [Authorize(Policy = "CanWriteTreatmentMachineData", Roles = Roles.Admin)]
+        [Route("machine-management/advanced")]
+        public IActionResult PostAdvanced([FromBody]TreatmentMachineViewModel treatmentMachineViewModel)
+        {
+            if (!ModelState.IsValid)
+            {
+                NotifyModelStateErrors();
+                return Response(treatmentMachineViewModel);
+            }
+
+            _treatmentMachineService.RegisterAdvanced(treatmentMachineViewModel);
+
+            return Response(treatmentMachineViewModel);
         }
 
         [HttpGet]
