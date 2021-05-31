@@ -35,6 +35,27 @@ Ovaj šablon predstavlje kolekciju poslovnih entiteta koji uprošćava infrastru
 
 Arhitektura ovog sistema prati principe DDD-a po kojima je dizajniran odvojeni **sloj domena**.
 
+```
+/
+  Solution/
+    DDDMedical.API/
+    DDDMedical.Application/
+    DDDMedical.Domain/
+    DDDMedical.Domain.Core/
+    DDDMedical.Infrastructure.Bus/
+    DDDMedical.Infrastructure.Data/
+    DDDMedical.Infrastructure.Identity/
+    DDDMedical.Infrastructure.Injector/
+```
+
+Sloj domena podeljen je u dva projekta - `DDDMedical.Domain.Core` i `DDDMedical.Domain`.
+
+`DDDMedical.Domain.Core` daje osnovne interfejse poput okvira za entitete, dogadjaje, komande i modele.
+
+`DDDMedical.Domain` definiše **sloj domena** i sadrži sve **komande i handler-e komandi**, **dogadjaje i handler-e**, **modele** , a na kraju i **servise**. Kontroleri sistema komunicraju preko servisa. Servisi objavljuju komande. Na kraju, komande obradjuju handler-i koji konsultuju repozitorijume i objavljuju nove dogadjaje. **Jedini nacin promene agregata je dogadjajima domena** koji proizvode takozvane bočne efekte.
+
+Iz ovog razloga, sva validacija i provera ispravnosti dogadjaja/komandi obavlja se u njihovim handler-ima. Pomoćna biblioteka odabrana kao rešenje za validaciju je `FluentValidation`.
+
 ## Sistem za upravljanje medicinskim entitetima
 
 ### Entiteti i pravila domena
