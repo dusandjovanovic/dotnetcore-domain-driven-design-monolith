@@ -60,6 +60,15 @@ Iz ovog razloga, sva validacija i provera ispravnosti dogadjaja/komandi obavlja 
 
 [architecture]: Docs/architecture.png
 
+Na slici se može videti osnovna arhitektura sistema. Po slici postoje jasno deifinisani slojevi. Sloj kontrolera (Application layer) preko servisa komunicira sa nažim slojem domena. Sloj domena, sa druge strane, nalazi se iznad sloja infrastrukture.
+
+Infrastrukturu čine pod-projekti `DDDMedical.Infrastructure.Bus`, `DDDMedical.Infrastructure.Data`, `DDDMedical.Infrastructure.Identity``DDDMedical.Infrastructure.Injector`. Ova infrstrukura obezbedjuje perzistenciju podataka, postavljanje magistrale dogadjaja kao i autorizaciju.
+
+![alt text][flow]
+
+[flow]: Docs/flow.png
+
+
 ## Sistem za upravljanje medicinskim entitetima
 
 ### Entiteti i pravila domena
