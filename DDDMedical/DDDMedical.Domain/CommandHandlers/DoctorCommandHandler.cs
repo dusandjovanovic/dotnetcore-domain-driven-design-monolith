@@ -36,7 +36,7 @@ namespace DDDMedical.Domain.CommandHandlers
                 return Task.FromResult(false);
             }
 
-            var doctor = new Doctor(Guid.NewGuid(), request.Name, request.Email, request.Roles, request.Reservations);
+            var doctor = new Doctor(Guid.NewGuid(), request.Name, request.Email, request.Reservations);
 
             if (_doctorRepository.GetByEmail(doctor.Email) != null)
             {
@@ -48,7 +48,7 @@ namespace DDDMedical.Domain.CommandHandlers
 
             if (Commit())
             {
-                _mediator.RaiseEvent(new DoctorRegisteredEvent(doctor.Id, doctor.Name, doctor.Email, doctor.Roles, doctor.Reservations));
+                _mediator.RaiseEvent(new DoctorRegisteredEvent(doctor.Id, doctor.Name, doctor.Email, doctor.Reservations));
             }
 
             return Task.FromResult(true);
@@ -89,7 +89,7 @@ namespace DDDMedical.Domain.CommandHandlers
                 return Task.FromResult(false);
             }
             
-            existingDoctor.Reservations.Add(reservationDay);
+            existingDoctor.Reservations.Add(reservationDay.ToString());
             
             _doctorRepository.Update(existingDoctor);
 

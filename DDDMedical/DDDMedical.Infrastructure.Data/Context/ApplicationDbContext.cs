@@ -13,7 +13,9 @@ namespace DDDMedical.Infrastructure.Data.Context
 {
     public class ApplicationDbContext : DbContext
     {
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) {}
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
+        {
+        }
         
         public DbSet<Consultation> Consultations { get; set; }
         public DbSet<Doctor> Doctors { get; set; }

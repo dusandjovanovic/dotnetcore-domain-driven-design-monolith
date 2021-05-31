@@ -11,16 +11,14 @@ namespace DDDMedical.Domain.Events.Doctor
         public Guid Id { get; private set; }
         public string Name { get; private set; }
         public string Email { get; private set; }
-        public ImmutableList<Role> Roles { get; private set; }
-        public List<DateTime> Reservations { get; private set; }
+        public List<string> Reservations { get; private set; }
         
-        public DoctorRegisteredEvent(Guid id, string name, string email, ImmutableList<Role> roles, List<DateTime> reservations)
+        public DoctorRegisteredEvent(Guid id, string name, string email, List<string> reservations)
         {
             Id = id;
             AggregateId = id;
             Name = name;
             Email = email;
-            Roles = roles;
             Reservations = reservations;
         }
     }

@@ -19,7 +19,6 @@ using Microsoft.Extensions.Logging;
 
 namespace DDDMedical.API.Controllers
 {
-    [Authorize]
     public class AccountController : ApiController
     {
         private readonly UserManager<ApplicationUser> _userManager;

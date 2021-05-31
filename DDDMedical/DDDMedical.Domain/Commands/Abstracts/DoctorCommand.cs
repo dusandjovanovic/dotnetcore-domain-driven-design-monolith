@@ -13,7 +13,6 @@ namespace DDDMedical.Domain.Commands.Abstracts
         public DateTime ReservationDay { get; protected set; }
         public string Name { get; protected set; }
         public string Email { get; protected set; }
-        public ImmutableList<Role> Roles { get; protected set; }
-        public List<DateTime> Reservations { get; set; }
+        public List<string> Reservations { get; set; }
     }
 }

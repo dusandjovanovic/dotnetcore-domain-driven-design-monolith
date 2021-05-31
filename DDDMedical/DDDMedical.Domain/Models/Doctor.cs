@@ -9,17 +9,15 @@ namespace DDDMedical.Domain.Models
     {
         public string Name { get; protected set; }
         public string Email { get; protected set; }
-        public ImmutableList<Role> Roles { get; protected set; }
-        public List<DateTime> Reservations { get; set; }
+        public List<string> Reservations { get; set; }
         
         protected Doctor() {}
 
-        public Doctor(Guid id, string name, string email, ImmutableList<Role> roles, List<DateTime> reservations)
+        public Doctor(Guid id, string name, string email, List<string> reservations)
         {
             Id = id;
             Name = name;
             Email = email;
-            Roles = roles;
             Reservations = reservations;
         }
     }

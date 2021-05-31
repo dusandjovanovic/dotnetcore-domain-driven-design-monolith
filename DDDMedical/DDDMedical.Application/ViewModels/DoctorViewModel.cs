@@ -25,17 +25,13 @@ namespace DDDMedical.Application.ViewModels
         [EmailAddress]
         [DisplayName("E-mail")]
         public string Email { get; set; }
-
-        [Required(ErrorMessage = "Reservation day is required")]
+        
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:yyyy-MM-dd}")]
         [DataType(DataType.Date, ErrorMessage = "Invalid format")]
         [DisplayName("Reservation day")]
         public DateTime ReservationDay { get; set; }
 
-        [Required(ErrorMessage = "Roles are required")]
-        public ImmutableList<Role> Roles { get; protected set; }
-        
         [Required(ErrorMessage = "Reservations are required")]
-        public List<DateTime> Reservations { get; set; }
+        public List<string> Reservations { get; set; }
     }
 }

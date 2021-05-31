@@ -10,7 +10,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace DDDMedical.API.Controllers
 {
-    [Authorize]
     public class ConsultationController : ApiController
     {
         private readonly IConsultationService _consultationService;
@@ -42,7 +41,7 @@ namespace DDDMedical.API.Controllers
         }
         
         [HttpPost]
-        [Authorize(Policy = "CanWriteConsultationData", Roles = Roles.Admin)]
+        [AllowAnonymous]
         [Route("consultation-management")]
         public IActionResult Post([FromBody]ConsultationViewModel consultationViewModel)
         {

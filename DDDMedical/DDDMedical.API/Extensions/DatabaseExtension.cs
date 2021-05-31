@@ -24,7 +24,8 @@ namespace DDDMedical.API.Extensions
 
             services.AddDbContext<ApplicationDbContext>(options =>
             {
-                options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
+                options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"), 
+                    x => x.MigrationsAssembly("DDDMedical.API"));
 
                 if (env.IsProduction()) return;
                 options.EnableDetailedErrors();
@@ -33,7 +34,8 @@ namespace DDDMedical.API.Extensions
 
             services.AddDbContext<EventStoreSqlContext>(options =>
             {
-                options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
+                options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"), 
+                    x => x.MigrationsAssembly("DDDMedical.API"));
 
                 if (env.IsProduction()) return;
                 options.EnableDetailedErrors();

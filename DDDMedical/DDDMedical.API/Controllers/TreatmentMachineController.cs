@@ -10,7 +10,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace DDDMedical.API.Controllers
 {
-    [Authorize]
     public class TreatmentMachineController : ApiController
     {
         private readonly ITreatmentMachineService _treatmentMachineService;
@@ -42,7 +41,7 @@ namespace DDDMedical.API.Controllers
         }
         
         [HttpPost]
-        [Authorize(Policy = "CanWriteTreatmentMachineData", Roles = Roles.Admin)]
+        [AllowAnonymous]
         [Route("machine-management/simple")]
         public IActionResult PostSimple([FromBody]TreatmentMachineViewModel treatmentMachineViewModel)
         {
@@ -58,7 +57,7 @@ namespace DDDMedical.API.Controllers
         }
         
         [HttpPost]
-        [Authorize(Policy = "CanWriteTreatmentMachineData", Roles = Roles.Admin)]
+        [AllowAnonymous]
         [Route("machine-management/advanced")]
         public IActionResult PostAdvanced([FromBody]TreatmentMachineViewModel treatmentMachineViewModel)
         {

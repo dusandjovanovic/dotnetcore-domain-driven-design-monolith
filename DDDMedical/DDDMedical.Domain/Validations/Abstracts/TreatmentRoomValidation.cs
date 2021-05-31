@@ -25,7 +25,7 @@ namespace DDDMedical.Domain.Validations.Abstracts
         protected void ValidateReservationDay()
         {
             RuleFor(c => c.ReservationDay).NotEmpty().Must(HaveLaterDateThanNow)
-                .WithMessage("Date cannot be in the past.");
+                .WithMessage("Must be in date format.");
         }
         
         private static bool HaveLaterDateThanNow(DateTime date)

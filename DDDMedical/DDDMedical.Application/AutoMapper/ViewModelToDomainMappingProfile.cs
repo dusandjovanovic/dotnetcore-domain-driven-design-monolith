@@ -18,7 +18,7 @@ namespace DDDMedical.Application.AutoMapper
                     c.RegistrationDate, c.ConsultationDate));
             
             CreateMap<DoctorViewModel, RegisterDoctorCommand>()
-                .ConstructUsing(c => new RegisterDoctorCommand(c.Id, c.Name, c.Email, c.Roles, c.Reservations));
+                .ConstructUsing(c => new RegisterDoctorCommand(c.Id, c.Name, c.Email, c.Reservations));
             CreateMap<DoctorViewModel, RemoveDoctorCommand>()
                 .ConstructUsing(c => new RemoveDoctorCommand(c.Id));
             CreateMap<DoctorViewModel, ReserveDoctorCommand>()

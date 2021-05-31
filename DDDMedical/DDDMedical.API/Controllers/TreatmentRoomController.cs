@@ -10,7 +10,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace DDDMedical.API.Controllers
 {
-    [Authorize]
     public class TreatmentRoomController : ApiController
     {
         private readonly ITreatmentRoomService _treatmentRoomService;
@@ -42,7 +41,7 @@ namespace DDDMedical.API.Controllers
         }
         
         [HttpPost]
-        [Authorize(Policy = "CanWriteTreatmentRoomData", Roles = Roles.Admin)]
+        [AllowAnonymous]
         [Route("room-management")]
         public IActionResult PostAdvanced([FromBody]TreatmentRoomViewModel treatmentRoomViewModel)
         {
@@ -58,7 +57,7 @@ namespace DDDMedical.API.Controllers
         }
         
         [HttpPut]
-        [Authorize(Policy = "CanWriteTreatmentRoomData", Roles = Roles.Admin)]
+        [AllowAnonymous]
         [Route("room-management/equip")]
         public IActionResult PutEquip([FromBody]TreatmentRoomViewModel treatmentRoomViewModel)
         {
@@ -74,7 +73,7 @@ namespace DDDMedical.API.Controllers
         }
         
         [HttpPut]
-        [Authorize(Policy = "CanWriteTreatmentRoomData", Roles = Roles.Admin)]
+        [AllowAnonymous]
         [Route("room-management/reserve")]
         public IActionResult PutReserve([FromBody]TreatmentRoomViewModel treatmentRoomViewModel)
         {
@@ -90,7 +89,7 @@ namespace DDDMedical.API.Controllers
         }
 
         [HttpDelete]
-        [Authorize(Policy = "CanRemoveTreatmentRoomData", Roles = Roles.Admin)]
+        [AllowAnonymous]
         [Route("room-management")]
         public IActionResult Delete(Guid id)
         {

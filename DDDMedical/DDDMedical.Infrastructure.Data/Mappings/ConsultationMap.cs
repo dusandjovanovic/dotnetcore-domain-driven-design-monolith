@@ -21,7 +21,7 @@ namespace DDDMedical.Infrastructure.Data.Mappings
                 .HasColumnName("TreatmentRoomId");
 
             builder.Property(c => c.ConsultationDate)
-                .HasColumnType("Date")
+                .HasColumnName("ConsultationDate")
                 .IsRequired();
 
             builder.Property(c => c.RegistrationDate)

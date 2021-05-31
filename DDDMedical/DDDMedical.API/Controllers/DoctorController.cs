@@ -10,7 +10,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace DDDMedical.API.Controllers
 {
-    [Authorize]
     public class DoctorController : ApiController
     {
         private readonly IDoctorService _doctorService;
@@ -42,7 +41,7 @@ namespace DDDMedical.API.Controllers
         }
         
         [HttpPost]
-        [Authorize(Policy = "CanWriteDoctorData", Roles = Roles.Admin)]
+        [AllowAnonymous]
         [Route("doctor-management")]
         public IActionResult Post([FromBody]DoctorViewModel doctorViewModel)
         {
@@ -58,7 +57,7 @@ namespace DDDMedical.API.Controllers
         }
         
         [HttpPut]
-        [Authorize(Policy = "CanWriteDoctorData", Roles = Roles.Admin)]
+        [AllowAnonymous]
         [Route("doctor-management")]
         public IActionResult Put([FromBody]DoctorViewModel doctorViewModel)
         {
@@ -74,7 +73,7 @@ namespace DDDMedical.API.Controllers
         }
 
         [HttpDelete]
-        [Authorize(Policy = "CanRemoveDoctorData", Roles = Roles.Admin)]
+        [AllowAnonymous]
         [Route("doctor-management")]
         public IActionResult Delete(Guid id)
         {

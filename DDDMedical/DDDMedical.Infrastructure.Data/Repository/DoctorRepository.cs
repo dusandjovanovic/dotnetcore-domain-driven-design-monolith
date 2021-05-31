@@ -16,14 +16,10 @@ namespace DDDMedical.Infrastructure.Data.Repository
             return _dbSet.AsNoTracking().FirstOrDefault(c => c.Email == email);
         }
 
-        public bool IsDoctorPulmonologist(Guid doctorId)
-        {
-            return _dbSet.Find(doctorId).Roles.Contains(Role.Pulmonologist);
-        }
-
         public bool IsDoctorReservedByHour(Guid doctorId, DateTime reservationDate)
         {
-            return _dbSet.Find(doctorId).Reservations.TrueForAll(d => d.Date != reservationDate.Date || d.Hour != reservationDate.Hour);
+            return _dbSet.Find(doctorId).Reservations
+                .TrueForAll(d => DateTime.Parse(d) != reservationDate.Date || DateTime.Parse(d).Hour != reservationDate.Hour);
         }
     }
 }
