@@ -31,16 +31,20 @@ Servisi su dodatni sloj koji sadrži logiku domena. Delovi su modela domena, ba�
 ### Repozitorijumi
 Ovaj šablon predstavlje kolekciju poslovnih entiteta koji uprošćava infrastrukturu podataka. Implementacijom repozitorijuma se model domena oslobadja infrastrukturnih briga. Konceptom raslojavanja postiže se razdvajanje briga.
 
+## Pregled osnovne arhitekture sistema
+
+Arhitektura ovog sistema prati principe DDD-a po kojima je dizajniran odvojeni **sloj domena**.
+
 ## Sistem za upravljanje medicinskim entitetima
 
-### Entiteti
+### Entiteti i pravila domena
 
 Sistem je izradjen kao pokazno rešenje za upravljanje medicinskim entitetima, skupovi ovih entiteta su:
-1. Lekari - `Doctor` sa atributima `Id`, `Name`, `Email` i `Reservations`.
-2. Pacijenti - `Patient` sa atributima `Id`, `Name`, `Email`, `RegistrationDate` i `PatientType`.
-3. Konsultacije - `Consultation` sa atributima `Id`, `DoctorId`, `PatientId`, `TreatmentRoomId`, `RegistrationDate` i `ConsultationDate`.
-4. Sobe za lečenje - `TreatmentRoom` sa atributima `Id`, `TreatmentMachineId` i `Name`.
-5. Mašine za lečenje - `TreatmentMachine` sa atributima `Id`, `TreatmentMachineType` i `Name`.
+1. Lekari - `Doctor` sa atributima `Id`, `Name`, `Email` i `Reservations`. Lekar poseduje ime i osnovne opisne atribute, zajedno sa listom rezervacija u obliku niza datuma kojih je zauzet. Lekari dodatno mogu da imaju dva tipa (`Pulmonologist` i `GeneralPractitioner`).
+2. Pacijenti - `Patient` sa atributima `Id`, `Name`, `Email`, `RegistrationDate` i `PatientType`. Pacijenat može da bude različitog tipa (poput `Covid19Patient` i `FluPatient`). U zavisnosti od tipa pacijenat može biti dodeljen samo jednom tipu lekara. `Covid19Patient` pacijenti moraju biti dodeljeni lekarima tipa `Pulmonologist`.
+3. Konsultacije - `Consultation` sa atributima `Id`, `DoctorId`, `PatientId`, `TreatmentRoomId`, `RegistrationDate` i `ConsultationDate`. Konsultacije su uparivanja izmedju pacijenata, lekara i soba za lečenje. Neophodno je ispoštovati pravila domena poput zakazivanja samo u terminu kada je lekar slobodan. Konsultacija traje jedan ceo dan i prema tome, lekar može imati jednu konsultaciju dnevno.
+4. Sobe za lečenje - `TreatmentRoom` sa atributima `Id`, `TreatmentMachineId` i `Name`. Sobe za lečenje mogu biti opremljene različitim mašinama.
+5. Mašine za lečenje - `TreatmentMachine` sa atributima `Id`, `TreatmentMachineType` i `Name`. Mašine za lečenje mogu da budu dva tipa (`Advanced` i `Simple`) i dodeljuju se sobama za lečenje.
 
 Dodatno, svi atributi poseduju interne atribute `CreatedAt`, `UpdatedAt`, `CreatedBy`, `UpdatedBy` i nasledjuju klasu osnove svih entiteta.
 
