@@ -30,3 +30,54 @@ Servisi su dodatni sloj koji sadrži logiku domena. Delovi su modela domena, ba�
 
 ### Repozitorijumi
 Ovaj šablon predstavlje kolekciju poslovnih entiteta koji uprošćava infrastrukturu podataka. Implementacijom repozitorijuma se model domena oslobadja infrastrukturnih briga. Konceptom raslojavanja postiže se razdvajanje briga.
+
+## Sistem za upravljanje medicinskim entitetima
+
+### Entiteti
+
+Sistem je izradjen kao pokazno rešenje za upravljanje medicinskim entitetima, skupovi ovih entiteta su:
+1. Lekari - `Doctor` sa atributima `Id`, `Name`, `Email` i `Reservations`.
+2. Pacijenti - `Patient` sa atributima `Id`, `Name`, `Email`, `RegistrationDate` i `PatientType`.
+3. Konsultacije - `Consultation` sa atributima `Id`, `DoctorId`, `PatientId`, `TreatmentRoomId`, `RegistrationDate` i `ConsultationDate`.
+4. Sobe za lečenje - `TreatmentRoom` sa atributima `Id`, `TreatmentMachineId` i `Name`.
+5. Mašine za lečenje - `TreatmentMachine` sa atributima `Id`, `TreatmentMachineType` i `Name`.
+
+Dodatno, svi atributi poseduju interne atribute `CreatedAt`, `UpdatedAt`, `CreatedBy`, `UpdatedBy` i nasledjuju klasu osnove svih entiteta.
+
+```csharp
+namespace DDDMedical.Domain.Models
+{
+    public class TreatmentMachine : EntityAudit
+    {
+    ...atributi entiteta
+    ...
+}
+```
+
+### Repozitorijumi
+
+Repozitorijumi enkapsuliraju upravljanje jednom grupom entitea. Svi repozitorijumi implementiraju osnovne upravljačke metode:
+
+```csharp
+namespace DDDMedical.Domain.Interfaces
+{
+    public interface IRepository<TEntity>: IDisposable where TEntity: class
+    {
+        void Add(TEntity obj);
+        
+        TEntity GetById(Guid id);
+        IQueryable<TEntity> GetAll();
+        IQueryable<TEntity> GetAll(ISpecification<TEntity> specification);
+        IQueryable<TEntity> GetAllSoftDeleted();
+
+        void Update(TEntity obj);
+        void Remove(Guid id);
+        int SaveChanges();
+    }
+}
+```
+
+A zatim, konkretni repozitorijumi implementiraju posebnu poslovnu logiku. Na primeru repozitorijuma za upravljanje lekarima postoje osnovna pravila domena koja se zadaju dodatnim metodama u vidu provere dostupnosti lekara.
+
+### Dogadjaji domena
+Dogadjaji se koriste kako bi se eksplicitno implementirali 
