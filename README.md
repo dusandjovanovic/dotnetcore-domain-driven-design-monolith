@@ -80,4 +80,106 @@ namespace DDDMedical.Domain.Interfaces
 A zatim, konkretni repozitorijumi implementiraju posebnu poslovnu logiku. Na primeru repozitorijuma za upravljanje lekarima postoje osnovna pravila domena koja se zadaju dodatnim metodama u vidu provere dostupnosti lekara.
 
 ### Dogadjaji domena
-Dogadjaji se koriste kako bi se eksplicitno implementirali 
+Dogadjaji se koriste kako bi se eksplicitno implementirali efekti nad agregatima. Generalno, za svak iskup agregata postoji po nekoliko dogadjaja koji mogu nastupiti.
+
+1. Lekari - `DoctorRegisteredEvent`, `DoctorRemovedEvent`, `DoctorReservedEvent`, `DoctorRegisteredEvent`.
+2. Pacijenti - `PatientCovidRegisteredEvent`, `PatientFluRegisteredEvent`, `PatientRemovedEvent`.
+3. Konsultacije - `ConsultationRegisteredEvent`.
+4. Sobe za lečenje - `TreatmentRoomRegisteredEvent`, `TreatmentRoomRemovedEvent`, `TreatmentRoomReservedEvent`, `TreatmentRoomEquippedWithMachineEvent`.
+5. Mašine za lečenje - `DoctorRegisteredEvent`, `DoctorRemovedEvent`, `DoctorReservedEvent`, `DoctorRegisteredEvent`.
+
+## Kontroleri i servisi
+Kontroleri su pisani tako da komuniciraju direktno sa servisima domena. Za svaki agregat domena postoji odvojen servis - tako, u slučaju konsultacija postoji servis koji implementira interfejs `IConsultationService`.
+
+```csharp
+namespace DDDMedical.Application.Interfaces
+{
+    public interface IConsultationService : IDisposable
+    {
+        void Register(ConsultationViewModel customerViewModel);
+
+        IEnumerable<ConsultationViewModel> GetAll();
+
+        IEnumerable<ConsultationViewModel> GetAll(int skip, int take);
+
+        ConsultationViewModel GetById(Guid id);
+
+        IList<ConsultationHistoryData> GetAllHistory(Guid id);
+    }
+}
+```
+
+Ovaj servis se "ubrizgava" u odgovarajući kontroler i koristi za **kreiranje komandi**. Ovim pristup se kontroler oslobadja domenske logike i samo poziva uslužne metode servisa. Kontroleri takodje ostaju veoma kratki i jasni, sva logika odvojena je u sloju domena. Evo primera obrade zahteva zakazivanja konsultacije.
+
+```csharp
+        [HttpPost]
+        [AllowAnonymous]
+        [Route("consultation-management")]
+        public IActionResult Post([FromBody]ConsultationViewModel consultationViewModel)
+        {
+            if (!ModelState.IsValid)
+            {
+                NotifyModelStateErrors();
+                return Response(consultationViewModel);
+            }
+
+            _consultationService.Register(consultationViewModel);
+
+            return Response(consultationViewModel);
+        }
+```
+
+Ovaj zahtev poziva metodu `.Register` servisa. Korišćenjem medijatora se "podiže" dogadjaj `RegisterConsultationCommand`.
+
+```csharp
+        public void Register(ConsultationViewModel consultationViewModel)
+        {
+            var registerConsultationCommand = _mapper.Map<RegisterConsultationCommand>(consultationViewModel);
+            _mediator.SendCommand(registerConsultationCommand);
+        }
+```
+
+### Komande domena
+Komande domena pozivaju se od strane servisa, neposredno proizilaze od ruta kontrolera kao što je prethodno objašnjeno.
+
+Za svaku komandu domena postoji zaseban handler koji garantuje njenu obradu. U kodu koji sledi može se videti primer zakazivanja konsultacije. Polazi se od formiranja novog entiteta. Zatim, konsultuju se repozitorijumi entiteta lekara i soba za lečenje.
+
+Ovde se oslanjajući na pravila entiteta nastavlja sa obradom zahteva ili se isti prekida. Na primer, ukoliko je lekar zauzet u traženom terminu dolazi do prekidanja zahteva. Na kraju obrade, izdaju se novi dogadjaji i komande poput `ConsultationRegisteredEvent` i `ReserveTreatmentRoomCommand` koji utiču na promene agregata, odvojeno. Dakle, handler-i komandi konsultuju repozitorijume zarad poštovanja **pravila i ograničenja domena**, a zatim izdaju **dogadjaje domena** koji utiču na promene agregata.
+
+```csharp
+        public Task<bool> Handle(RegisterConsultationCommand request, CancellationToken cancellationToken)
+        {
+            if (!request.IsValid())
+            {
+                NotifyValidationErrors(request);
+                return Task.FromResult(false);
+            }
+
+            var consultation = new Consultation(Guid.NewGuid(), request.DoctorId, request.PatientId, request.TreatmentRoomId, 
+                request.RegistrationDate, request.ConsultationDate);
+                
+            var treatmentRoom = _treatmentRoomRepository.GetById(request.TreatmentRoomId);
+
+            if (_doctorRepository.IsDoctorReservedByHour(request.DoctorId, request.ConsultationDate))
+            {
+                _mediator.RaiseEvent(new DomainNotification(request.MessageType, "Doctor's timetable is already taken."));
+                return Task.FromResult(false);
+            }
+
+            _consultationRepository.Add(consultation);
+
+            if (!Commit()) return Task.FromResult(true);
+            
+            _mediator.RaiseEvent(new ConsultationRegisteredEvent(consultation.Id, consultation.PatientId, consultation.DoctorId, 
+                consultation.TreatmentRoomId, consultation.RegistrationDate, consultation.ConsultationDate));
+                
+            _mediator.SendCommand(new ReserveDoctorCommand(consultation.DoctorId, consultation.ConsultationDate, consultation.Id));
+            
+            _mediator.SendCommand(new ReserveTreatmentRoomCommand(consultation.TreatmentRoomId,
+                consultation.ConsultationDate, treatmentRoom.TreatmentMachineId));
+
+            return Task.FromResult(true);
+        }
+```
+
+Može se videti da su dogadjaji domena, kao i komande, pisani po jeziku samog domena. Separacija je potpuna jer dogadjaji koji se odnose na lekare utiču samo na promene agregata lekara - isti princip važi za sve ostale entitete.
