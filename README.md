@@ -56,6 +56,8 @@ Sloj domena podeljen je u dva projekta - `DDDMedical.Domain.Core` i `DDDMedical.
 
 Iz ovog razloga, sva validacija i provera ispravnosti dogadjaja/komandi obavlja se u njihovim handler-ima. Pomoćna biblioteka odabrana kao rešenje za validaciju je `FluentValidation`.
 
+
+
 ## Sistem za upravljanje medicinskim entitetima
 
 ### Entiteti i pravila domena
