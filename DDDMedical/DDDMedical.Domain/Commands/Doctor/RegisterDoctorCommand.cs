@@ -9,11 +9,12 @@ namespace DDDMedical.Domain.Commands.Doctor
 {
     public class RegisterDoctorCommand : DoctorCommand
     {
-        public RegisterDoctorCommand(Guid id, string name, string email, List<string> reservations)
+        public RegisterDoctorCommand(Guid id, string name, string email, Role role, List<string> reservations)
         {
             Id = id;
             Name = name;
             Email = email;
+            Role = role;
             Reservations = reservations;
         }
         

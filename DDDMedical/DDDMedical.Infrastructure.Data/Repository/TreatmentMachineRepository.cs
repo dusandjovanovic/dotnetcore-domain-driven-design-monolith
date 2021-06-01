@@ -7,7 +7,5 @@ namespace DDDMedical.Infrastructure.Data.Repository
     public class TreatmentMachineRepository : Repository<TreatmentMachine>, ITreatmentMachineRepository
     {
         public TreatmentMachineRepository(ApplicationDbContext context) : base(context) { }
-        
-        
     }
 }

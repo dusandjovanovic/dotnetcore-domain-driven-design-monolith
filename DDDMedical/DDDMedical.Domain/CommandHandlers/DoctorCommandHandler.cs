@@ -36,7 +36,7 @@ namespace DDDMedical.Domain.CommandHandlers
                 return Task.FromResult(false);
             }
 
-            var doctor = new Doctor(Guid.NewGuid(), request.Name, request.Email, request.Reservations);
+            var doctor = new Doctor(Guid.NewGuid(), request.Name, request.Email, request.Role, request.Reservations);
 
             if (_doctorRepository.GetByEmail(doctor.Email) != null)
             {

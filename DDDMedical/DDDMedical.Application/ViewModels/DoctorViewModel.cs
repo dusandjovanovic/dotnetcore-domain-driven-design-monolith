@@ -33,5 +33,8 @@ namespace DDDMedical.Application.ViewModels
 
         [Required(ErrorMessage = "Reservations are required")]
         public List<string> Reservations { get; set; }
+        
+        [Required(ErrorMessage = "Role is required")]
+        public Role Role { get; set; }
     }
 }

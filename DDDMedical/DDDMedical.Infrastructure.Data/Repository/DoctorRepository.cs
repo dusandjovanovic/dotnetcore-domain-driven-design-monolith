@@ -19,7 +19,17 @@ namespace DDDMedical.Infrastructure.Data.Repository
         public bool IsDoctorReservedByHour(Guid doctorId, DateTime reservationDate)
         {
             return _dbSet.Find(doctorId).Reservations
-                .TrueForAll(d => DateTime.Parse(d) != reservationDate.Date || DateTime.Parse(d).Hour != reservationDate.Hour);
+                .TrueForAll(d => DateTime.Parse(d).Date != reservationDate.Date);
+        }
+
+        public bool IsDoctorPulmonologist(Guid doctorId)
+        {
+            return _dbSet.Find(doctorId).Role == Role.Pulmonologist;
+        }
+
+        public bool IsDoctorGeneralPractitioner(Guid doctorId)
+        {
+            return _dbSet.Find(doctorId).Role == Role.GeneralPractitioner;
         }
     }
 }

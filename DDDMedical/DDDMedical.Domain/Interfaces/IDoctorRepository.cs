@@ -8,5 +8,9 @@ namespace DDDMedical.Domain.Interfaces
         Doctor GetByEmail(string email);
 
         bool IsDoctorReservedByHour(Guid doctorId, DateTime reservationDate);
+        
+        bool IsDoctorPulmonologist(Guid doctorId);
+        
+        bool IsDoctorGeneralPractitioner(Guid doctorId);
     }
 }
