@@ -168,31 +168,31 @@ namespace DDDMedical.Application.Interfaces
 Ovaj servis se "ubrizgava" u odgovarajući kontroler i koristi za **kreiranje komandi**. Ovim pristup se kontroler oslobadja domenske logike i samo poziva uslužne metode servisa. Kontroleri takodje ostaju veoma kratki i jasni, sva logika odvojena je u sloju domena. Evo primera obrade zahteva zakazivanja konsultacije.
 
 ```csharp
-        [HttpPost]
-        [AllowAnonymous]
-        [Route("consultation-management")]
-        public IActionResult Post([FromBody]ConsultationViewModel consultationViewModel)
-        {
-            if (!ModelState.IsValid)
-            {
-                NotifyModelStateErrors();
-                return Response(consultationViewModel);
-            }
+[HttpPost]
+[AllowAnonymous]
+[Route("consultation-management")]
+public IActionResult Post([FromBody]ConsultationViewModel consultationViewModel)
+{
+    if (!ModelState.IsValid)
+    {
+        NotifyModelStateErrors();
+        return Response(consultationViewModel);
+    }
 
-            _consultationService.Register(consultationViewModel);
+    _consultationService.Register(consultationViewModel);
 
-            return Response(consultationViewModel);
-        }
+    return Response(consultationViewModel);
+}
 ```
 
 Ovaj zahtev poziva metodu `.Register` servisa. Korišćenjem medijatora se "podiže" dogadjaj `RegisterConsultationCommand`.
 
 ```csharp
-        public void Register(ConsultationViewModel consultationViewModel)
-        {
-            var registerConsultationCommand = _mapper.Map<RegisterConsultationCommand>(consultationViewModel);
-            _mediator.SendCommand(registerConsultationCommand);
-        }
+public void Register(ConsultationViewModel consultationViewModel)
+{
+    var registerConsultationCommand = _mapper.Map<RegisterConsultationCommand>(consultationViewModel);
+    _mediator.SendCommand(registerConsultationCommand);
+}
 ```
 
 ### Komande domena
@@ -203,39 +203,91 @@ Za svaku komandu domena postoji zaseban handler koji garantuje njenu obradu. U k
 Ovde se oslanjajući na pravila entiteta nastavlja sa obradom zahteva ili se isti prekida. Na primer, ukoliko je lekar zauzet u traženom terminu dolazi do prekidanja zahteva. Na kraju obrade, izdaju se novi dogadjaji i komande poput `ConsultationRegisteredEvent` i `ReserveTreatmentRoomCommand` koji utiču na promene agregata, odvojeno. Dakle, handler-i komandi konsultuju repozitorijume zarad poštovanja **pravila i ograničenja domena**, a zatim izdaju **dogadjaje domena** koji utiču na promene agregata.
 
 ```csharp
-        public Task<bool> Handle(RegisterConsultationCommand request, CancellationToken cancellationToken)
-        {
-            if (!request.IsValid())
-            {
-                NotifyValidationErrors(request);
-                return Task.FromResult(false);
-            }
+public Task<bool> Handle(RegisterConsultationCommand request, CancellationToken cancellationToken)
+{
+    if (!request.IsValid())
+    {
+        NotifyValidationErrors(request);
+        return Task.FromResult(false);
+    }
 
-            var consultation = new Consultation(Guid.NewGuid(), request.DoctorId, request.PatientId, request.TreatmentRoomId, 
-                request.RegistrationDate, request.ConsultationDate);
-                
-            var treatmentRoom = _treatmentRoomRepository.GetById(request.TreatmentRoomId);
+    var consultation = new Consultation(Guid.NewGuid(), request.DoctorId, request.PatientId, request.TreatmentRoomId, 
+        request.RegistrationDate, request.ConsultationDate);
 
-            if (_doctorRepository.IsDoctorReservedByHour(request.DoctorId, request.ConsultationDate))
-            {
-                _mediator.RaiseEvent(new DomainNotification(request.MessageType, "Doctor's timetable is already taken."));
-                return Task.FromResult(false);
-            }
+    var treatmentRoom = _treatmentRoomRepository.GetById(request.TreatmentRoomId);
 
-            _consultationRepository.Add(consultation);
+    if (_doctorRepository.IsDoctorReservedByHour(request.DoctorId, request.ConsultationDate))
+    {
+        _mediator.RaiseEvent(new DomainNotification(request.MessageType, "Doctor's timetable is already taken."));
+        return Task.FromResult(false);
+    }
 
-            if (!Commit()) return Task.FromResult(true);
-            
-            _mediator.RaiseEvent(new ConsultationRegisteredEvent(consultation.Id, consultation.PatientId, consultation.DoctorId, 
-                consultation.TreatmentRoomId, consultation.RegistrationDate, consultation.ConsultationDate));
-                
-            _mediator.SendCommand(new ReserveDoctorCommand(consultation.DoctorId, consultation.ConsultationDate, consultation.Id));
-            
-            _mediator.SendCommand(new ReserveTreatmentRoomCommand(consultation.TreatmentRoomId,
-                consultation.ConsultationDate, treatmentRoom.TreatmentMachineId));
+    _consultationRepository.Add(consultation);
 
-            return Task.FromResult(true);
-        }
+    if (!Commit()) return Task.FromResult(true);
+
+    _mediator.RaiseEvent(new ConsultationRegisteredEvent(consultation.Id, consultation.PatientId, consultation.DoctorId, 
+        consultation.TreatmentRoomId, consultation.RegistrationDate, consultation.ConsultationDate));
+
+    _mediator.SendCommand(new ReserveDoctorCommand(consultation.DoctorId, consultation.ConsultationDate, consultation.Id));
+
+    _mediator.SendCommand(new ReserveTreatmentRoomCommand(consultation.TreatmentRoomId,
+        consultation.ConsultationDate, treatmentRoom.TreatmentMachineId));
+
+    return Task.FromResult(true);
+}
 ```
 
 Može se videti da su dogadjaji domena, kao i komande, pisani po jeziku samog domena. Separacija je potpuna jer dogadjaji koji se odnose na lekare utiču samo na promene agregata lekara - isti princip važi za sve ostale entitete.
+
+### Sloj perzistencije
+
+Za perzistenciju se koristi `mssql_server` baza podataka, dok je mapiranje ostvareno korišćenjem rešenja `EntityFrameworkCore`. Mapiranje se ostvaruje kroz dva konteksta, prvi kontekst sumira sve entitete koji predstavljaju modele i naziva se `ApplicationDbContext`, a koristi se i pomoćni kontekst za perzistenciju dogadjaja.
+
+```csharp
+namespace DDDMedical.Infrastructure.Data.Context
+{
+    public class ApplicationDbContext : DbContext
+    {
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
+        {
+        }
+        
+        public DbSet<Consultation> Consultations { get; set; }
+        public DbSet<Doctor> Doctors { get; set; }
+        public DbSet<Patient> Patients { get; set; }
+        public DbSet<TreatmentMachine> TreatmentMachines { get; set; }
+        public DbSet<TreatmentRoom> TreatmentRooms { get; set; }
+        
+        ...
+```
+
+Za komunikaciju sa izvorom podataka neophodno je navesti parametre u stringu koji opisuje konekciju koji će ostvariti vezu sa *driver-om*. Ukoliko se koristi `docker` kontejner `mcr.microsoft.com/mssql/server:2019-latest` sa podrazumevanim podešavanjima parametar konekcije je `Server=localhost,1433;Database=medical;MultipleActiveResultSets=true;User=sa;Password=yourStrong(!)Password`.
+
+```csharp
+services.AddDbContext<ApplicationDbContext>(options =>
+    {
+        options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"), 
+            x => x.MigrationsAssembly("DDDMedical.API"));
+
+        if (env.IsProduction()) return;
+        options.EnableDetailedErrors();
+        options.EnableSensitiveDataLogging();
+    });
+```
+
+## Pokretanje sistema
+
+Sistem se pokreće nakon build-ovanja pod-projekta `DDDMedical.API` koji predstavlja aplikativni sloj. Ovaj sloj postavlja kontrolere i inicijalizuje `ApplicarionService` servis koji komunicira sa **nižim domenskim slojem**.
+
+Neophodno je pre svega izvršiti migracije nad bazom podataka:
+`$ dotnet ef migrations add InitialCreate --context ApplicationDbContext`
+`$ dotnet ef database update --context ApplicationDbContext`
+
+Migracije se vrše iz pomenutog API pod-projekta jer je označen kao `MigrationsAssembly`, iako su konteksti napisani u domenskom pod-projektu.
+
+Na kraju, aplikativni sloj sadrži i `swagger` interfejs preko koga se mogu koristiti kontroleri.
+
+![alt text][user_interface]
+
+[user_interface]: Docs/user_interface.png
