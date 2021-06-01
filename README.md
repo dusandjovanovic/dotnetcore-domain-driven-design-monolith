@@ -102,7 +102,7 @@ namespace DDDMedical.Domain.Models
 2. U zavisnosti od tipa pacijenta, konsultacija može biti dodeljena samo odredjenom tipu lekara. `Covid19Patient` pacijenti moraju biti dodeljeni lekarima tipa `Pulmonologist`. Suprotno važi za preostalo uparivanje tipova.
 3. Jedna soba za lečenje može posedovati veći broj mašina.
 4. Kako bi konsultacija za `Covid19Patient` pacijente bila dozvoljena, neophodno je da soba za lečenje poseduje bar jednu mašinu.
-5. Ukoliko više pacijenata zakazuje konsultacije istog dana (kod različitih lekara), neophodno je da soba za lečenje poseduje dovoljan broj slobodnih mašina. `num(Covid19Patient)x1`.
+5. Ukoliko više pacijenata zakazuje konsultacije istog dana (kod različitih lekara), neophodno je da soba za lečenje poseduje dovoljan broj slobodnih mašina `num(Covid19Patient)x1`.
 6. Svi atributi lekara/pacijenata/soba/mašina su neophodni prilikom njihovog dodavanja u sistem.
 7. Prilikom brisanja lekara iz sistema, neophodno je da lekar nema zakazane konsultacije u budućnosti.
 8. Prilikom brisanja soba/mašina za lečenje iz sistema, takodje je neophodno da nemaju zakazane rezervacije u budućnosti.
