@@ -278,7 +278,7 @@ services.AddDbContext<ApplicationDbContext>(options =>
 
 ## Pokretanje sistema
 
-Sistem se pokreće nakon build-ovanja pod-projekta `DDDMedical.API` koji predstavlja aplikativni sloj. Ovaj sloj postavlja kontrolere i inicijalizuje `ApplicarionService` servis koji komunicira sa **nižim domenskim slojem**.
+Sistem se pokreće nakon "izgradnje" pod-projekta `DDDMedical.API` koji predstavlja aplikativni sloj. Ovaj sloj postavlja kontrolere i inicijalizuje `ApplicarionService` servis koji komunicira sa **nižim domenskim slojem**.
 
 Neophodno je pre svega izvršiti migracije nad bazom podataka:
 `$ dotnet ef migrations add InitialCreate --context ApplicationDbContext`
