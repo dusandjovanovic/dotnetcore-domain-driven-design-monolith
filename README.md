@@ -281,7 +281,9 @@ services.AddDbContext<ApplicationDbContext>(options =>
 Sistem se pokreće nakon "izgradnje" pod-projekta `DDDMedical.API` koji predstavlja aplikativni sloj. Ovaj sloj postavlja kontrolere i inicijalizuje `ApplicarionService` servis koji komunicira sa **nižim domenskim slojem**.
 
 Neophodno je pre svega izvršiti migracije nad bazom podataka:
+
 `$ dotnet ef migrations add InitialCreate --context ApplicationDbContext`
+
 `$ dotnet ef database update --context ApplicationDbContext`
 
 Migracije se vrše iz pomenutog API pod-projekta jer je označen kao `MigrationsAssembly`, iako su konteksti napisani u domenskom pod-projektu.
