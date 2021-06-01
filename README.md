@@ -60,18 +60,31 @@ Iz ovog razloga, sva validacija i provera ispravnosti dogadjaja/komandi obavlja 
 
 [architecture]: Docs/architecture.png
 
+Na slici se može videti osnovna arhitektura sistema. Po slici postoje jasno deifinisani slojevi. Sloj kontrolera (Application layer) preko servisa komunicira sa nažim slojem domena. Sloj domena, sa druge strane, nalazi se iznad sloja infrastrukture.
+
+Infrastrukturu čine pod-projekti `DDDMedical.Infrastructure.Bus`, `DDDMedical.Infrastructure.Data`, `DDDMedical.Infrastructure.Identity`, `DDDMedical.Infrastructure.Injector`. Ova infrstrukura obezbedjuje perzistenciju podataka, postavljanje magistrale dogadjaja kao i autorizaciju.
+
+Tok obrade zahteva prikazan je na sledećoj slici. Ukoliko se radi o `GET` zahtevima, odmah se prosledjuju do repozitorijuma koja preko infrastrukturnog sloja održavaju stanje agregata. U suprotnom, preko servisa se prave komande koje se validiraju. Ukoliko je validacija uspešna prelazi se na repozitorijume koji menjaju perzistenciju podataka i "podižu" dogadjaj kako bi obavestili sve agregate.
+
+![alt text][flow]
+
+[flow]: Docs/flow.png
+
+
 ## Sistem za upravljanje medicinskim entitetima
 
 ### Entiteti i pravila domena
 
+#### Entiteti domena
+
 Sistem je izradjen kao pokazno rešenje za upravljanje medicinskim entitetima, skupovi ovih entiteta su:
-1. Lekari - `Doctor` sa atributima `Id`, `Name`, `Email` i `Reservations`. Lekar poseduje ime i osnovne opisne atribute, zajedno sa listom rezervacija u obliku niza datuma kojih je zauzet. Lekari dodatno mogu da imaju dva tipa (`Pulmonologist` i `GeneralPractitioner`).
-2. Pacijenti - `Patient` sa atributima `Id`, `Name`, `Email`, `RegistrationDate` i `PatientType`. Pacijenat može da bude različitog tipa (poput `Covid19Patient` i `FluPatient`). U zavisnosti od tipa pacijenat može biti dodeljen samo jednom tipu lekara. `Covid19Patient` pacijenti moraju biti dodeljeni lekarima tipa `Pulmonologist`.
-3. Konsultacije - `Consultation` sa atributima `Id`, `DoctorId`, `PatientId`, `TreatmentRoomId`, `RegistrationDate` i `ConsultationDate`. Konsultacije su uparivanja izmedju pacijenata, lekara i soba za lečenje. Neophodno je ispoštovati pravila domena poput zakazivanja samo u terminu kada je lekar slobodan. Konsultacija traje jedan ceo dan i prema tome, lekar može imati jednu konsultaciju dnevno.
+1. Lekari - `Doctor` sa atributima `Id`, `Name`, `Email` i `Reservations`. Lekar poseduje ime i osnovne opisne atribute, zajedno sa listom rezervacija u obliku niza datuma kojih je zauzet. Lekari dodatno mogu da budu dva različita tipa (`Pulmonologist` i `GeneralPractitioner`).
+2. Pacijenti - `Patient` sa atributima `Id`, `Name`, `Email`, `RegistrationDate` i `PatientType`. Pacijenat može da bude različitog tipa - `Covid19Patient` i `FluPatient`.
+3. Konsultacije - `Consultation` sa atributima `Id`, `DoctorId`, `PatientId`, `TreatmentRoomId`, `RegistrationDate` i `ConsultationDate`. Konsultacije su uparivanja izmedju pacijenata, lekara i soba za lečenje. Neophodno je ispoštovati pravila domena poput zakazivanja samo u terminu kada je lekar slobodan.
 4. Sobe za lečenje - `TreatmentRoom` sa atributima `Id`, `TreatmentMachineId` i `Name`. Sobe za lečenje mogu biti opremljene različitim mašinama.
 5. Mašine za lečenje - `TreatmentMachine` sa atributima `Id`, `TreatmentMachineType` i `Name`. Mašine za lečenje mogu da budu dva tipa (`Advanced` i `Simple`) i dodeljuju se sobama za lečenje.
 
-Dodatno, svi atributi poseduju interne atribute `CreatedAt`, `UpdatedAt`, `CreatedBy`, `UpdatedBy` i nasledjuju klasu osnove svih entiteta.
+Dodatno, svi atributi poseduju interne atribute `CreatedAt`, `UpdatedAt`, `CreatedBy`, `UpdatedBy` i nasledjuju klasu osnove svih entiteta pod nazivom `EntityAudit`. Ova klasa se koristi za gradjenje genričkih repozitorijuma koji se proširuju po potrebi konkretnog agregata u specifiziraju pravilima domena.
 
 ```csharp
 namespace DDDMedical.Domain.Models
@@ -83,9 +96,23 @@ namespace DDDMedical.Domain.Models
 }
 ```
 
+#### Pravila domena
+
+1. Konsultacija traje jedan dan i prema tome, lekar može imati jednu konsultaciju dnevno.
+2. U zavisnosti od tipa pacijenta, konsultacija može biti dodeljena samo odredjenom tipu lekara. `Covid19Patient` pacijenti moraju biti dodeljeni lekarima tipa `Pulmonologist`. Suprotno važi za preostalo uparivanje tipova.
+3. Jedna soba za lečenje može posedovati veći broj mašina.
+4. Kako bi konsultacija za `Covid19Patient` pacijente bila dozvoljena, neophodno je da soba za lečenje poseduje bar jednu mašinu.
+5. Ukoliko više pacijenata zakazuje konsultacije istog dana (kod različitih lekara), neophodno je da soba za lečenje poseduje dovoljan broj slobodnih mašina `num(Covid19Patient)x1`.
+6. Svi atributi lekara/pacijenata/soba/mašina su neophodni prilikom njihovog dodavanja u sistem.
+7. Prilikom brisanja lekara iz sistema, neophodno je da lekar nema zakazane konsultacije u budućnosti.
+8. Prilikom brisanja soba/mašina za lečenje iz sistema, takodje je neophodno da nemaju zakazane rezervacije u budućnosti.
+9. Prilikom dodavanja lekara u sistem, neophodno je da entitet poseduje jedinstvenu e-mail adresu.
+10. Prilikom dodavanja pacdijenata u sistem, takodje je neophodno da entitet poseduje jedinstvenu e-mail adresu.
+11. Prilikom dodavanja soba/mašina za lečenje, neophodno je da entiteti poseduju jedinstvena imena.
+
 ### Repozitorijumi
 
-Repozitorijumi enkapsuliraju upravljanje jednom grupom entitea. Svi repozitorijumi implementiraju osnovne upravljačke metode:
+Repozitorijumi enkapsuliraju upravljanje grupama entiteta. Svi repozitorijumi implementiraju osnovne upravljačke metode:
 
 ```csharp
 namespace DDDMedical.Domain.Interfaces
@@ -106,7 +133,7 @@ namespace DDDMedical.Domain.Interfaces
 }
 ```
 
-A zatim, konkretni repozitorijumi implementiraju posebnu poslovnu logiku. Na primeru repozitorijuma za upravljanje lekarima postoje osnovna pravila domena koja se zadaju dodatnim metodama u vidu provere dostupnosti lekara.
+A zatim, konkretni repozitorijumi implementiraju posebnu poslovnu logiku, tačnije **logiku domena**. Na primeru repozitorijuma za upravljanje lekarima postoje osnovna pravila domena koja se zadaju dodatnim metodama u vidu provere dostupnosti lekara.
 
 ### Dogadjaji domena
 Dogadjaji se koriste kako bi se eksplicitno implementirali efekti nad agregatima. Generalno, za svak iskup agregata postoji po nekoliko dogadjaja koji mogu nastupiti.
