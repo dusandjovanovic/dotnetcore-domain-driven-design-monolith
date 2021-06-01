@@ -106,6 +106,9 @@ namespace DDDMedical.Domain.Models
 6. Svi atributi lekara/pacijenata/soba/mašina su neophodni prilikom njihovog dodavanja u sistem.
 7. Prilikom brisanja lekara iz sistema, neophodno je da lekar nema zakazane konsultacije u budućnosti.
 8. Prilikom brisanja soba/mašina za lečenje iz sistema, takodje je neophodno da nemaju zakazane rezervacije u budućnosti.
+9. Prilikom dodavanja lekara u sistem, neophodno je da entitet poseduje jedinstvenu e-mail adresu.
+10. Prilikom dodavanja pacdijenata u sistem, takodje je neophodno da entitet poseduje jedinstvenu e-mail adresu.
+11. Prilikom dodavanja soba/mašina za lečenje, neophodno je da entiteti poseduju jedinstvena imena.
 
 ### Repozitorijumi
 
