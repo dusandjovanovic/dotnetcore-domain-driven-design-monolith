@@ -42,10 +42,7 @@ Arhitektura ovog sistema prati principe DDD-a po kojima je dizajniran odvojeni *
     DDDMedical.Application/
     DDDMedical.Domain/
     DDDMedical.Domain.Core/
-    DDDMedical.Infrastructure.Bus/
     DDDMedical.Infrastructure.Data/
-    DDDMedical.Infrastructure.Identity/
-    DDDMedical.Infrastructure.Injector/
 ```
 
 Sloj domena podeljen je u dva projekta - `DDDMedical.Domain.Core` i `DDDMedical.Domain`.
@@ -62,7 +59,7 @@ Iz ovog razloga, sva validacija i provera ispravnosti dogadjaja/komandi obavlja 
 
 Na slici se može videti osnovna arhitektura sistema. Po slici postoje jasno deifinisani slojevi. Sloj kontrolera (Application layer) preko servisa komunicira sa nažim slojem domena. Sloj domena, sa druge strane, nalazi se iznad sloja infrastrukture.
 
-Infrastrukturu čine pod-projekti `DDDMedical.Infrastructure.Bus`, `DDDMedical.Infrastructure.Data`, `DDDMedical.Infrastructure.Identity`, `DDDMedical.Infrastructure.Injector`. Ova infrstrukura obezbedjuje perzistenciju podataka, postavljanje magistrale dogadjaja kao i autorizaciju.
+Infrastrukturu čini pod-projekat `DDDMedical.Infrastructure.Data`. Ova infrstrukura obezbedjuje perzistenciju podataka.
 
 Tok obrade zahteva prikazan je na sledećoj slici. Ukoliko se radi o `GET` zahtevima, odmah se prosledjuju do repozitorijuma koja preko infrastrukturnog sloja održavaju stanje agregata. U suprotnom, preko servisa se prave komande koje se validiraju. Ukoliko je validacija uspešna prelazi se na repozitorijume koji menjaju perzistenciju podataka i "podižu" dogadjaj kako bi obavestili sve agregate.
 
@@ -100,15 +97,14 @@ namespace DDDMedical.Domain.Models
 
 1. Konsultacija traje jedan dan i prema tome, lekar može imati jednu konsultaciju dnevno.
 2. U zavisnosti od tipa pacijenta, konsultacija može biti dodeljena samo odredjenom tipu lekara. `Covid19Patient` pacijenti moraju biti dodeljeni lekarima tipa `Pulmonologist`. Suprotno važi za preostalo uparivanje tipova.
-3. Jedna soba za lečenje može posedovati veći broj mašina.
+3. Jedna soba za lečenje može posedovati jednu mašinu (ili nijednu).
 4. Kako bi konsultacija za `Covid19Patient` pacijente bila dozvoljena, neophodno je da soba za lečenje poseduje bar jednu mašinu.
-5. Ukoliko više pacijenata zakazuje konsultacije istog dana (kod različitih lekara), neophodno je da soba za lečenje poseduje dovoljan broj slobodnih mašina `num(Covid19Patient)x1`.
-6. Svi atributi lekara/pacijenata/soba/mašina su neophodni prilikom njihovog dodavanja u sistem.
-7. Prilikom brisanja lekara iz sistema, neophodno je da lekar nema zakazane konsultacije u budućnosti.
-8. Prilikom brisanja soba/mašina za lečenje iz sistema, takodje je neophodno da nemaju zakazane rezervacije u budućnosti.
-9. Prilikom dodavanja lekara u sistem, neophodno je da entitet poseduje jedinstvenu e-mail adresu.
-10. Prilikom dodavanja pacdijenata u sistem, takodje je neophodno da entitet poseduje jedinstvenu e-mail adresu.
-11. Prilikom dodavanja soba/mašina za lečenje, neophodno je da entiteti poseduju jedinstvena imena.
+5. Svi atributi lekara/pacijenata/soba/mašina su neophodni prilikom njihovog dodavanja u sistem.
+6. Prilikom brisanja lekara iz sistema, neophodno je da lekar nema zakazane konsultacije u budućnosti.
+7. Prilikom brisanja soba/mašina za lečenje iz sistema, takodje je neophodno da nemaju zakazane rezervacije u budućnosti.
+8. Prilikom dodavanja lekara u sistem, neophodno je da entitet poseduje jedinstvenu e-mail adresu.
+9. Prilikom dodavanja pacijenata u sistem, takodje je neophodno da entitet poseduje jedinstvenu e-mail adresu.
+10. Prilikom dodavanja soba/mašina za lečenje, neophodno je da entiteti poseduju jedinstvena imena.
 
 ### Repozitorijumi
 
