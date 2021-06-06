@@ -42,10 +42,7 @@ Arhitektura ovog sistema prati principe DDD-a po kojima je dizajniran odvojeni *
     DDDMedical.Application/
     DDDMedical.Domain/
     DDDMedical.Domain.Core/
-    DDDMedical.Infrastructure.Bus/
     DDDMedical.Infrastructure.Data/
-    DDDMedical.Infrastructure.Identity/
-    DDDMedical.Infrastructure.Injector/
 ```
 
 Sloj domena podeljen je u dva projekta - `DDDMedical.Domain.Core` i `DDDMedical.Domain`.
@@ -62,7 +59,7 @@ Iz ovog razloga, sva validacija i provera ispravnosti dogadjaja/komandi obavlja 
 
 Na slici se može videti osnovna arhitektura sistema. Po slici postoje jasno deifinisani slojevi. Sloj kontrolera (Application layer) preko servisa komunicira sa nažim slojem domena. Sloj domena, sa druge strane, nalazi se iznad sloja infrastrukture.
 
-Infrastrukturu čine pod-projekti `DDDMedical.Infrastructure.Bus`, `DDDMedical.Infrastructure.Data`, `DDDMedical.Infrastructure.Identity`, `DDDMedical.Infrastructure.Injector`. Ova infrstrukura obezbedjuje perzistenciju podataka, postavljanje magistrale dogadjaja kao i autorizaciju.
+Infrastrukturu čini pod-projekat `DDDMedical.Infrastructure.Data`. Ova infrstrukura obezbedjuje perzistenciju podataka.
 
 Tok obrade zahteva prikazan je na sledećoj slici. Ukoliko se radi o `GET` zahtevima, odmah se prosledjuju do repozitorijuma koja preko infrastrukturnog sloja održavaju stanje agregata. U suprotnom, preko servisa se prave komande koje se validiraju. Ukoliko je validacija uspešna prelazi se na repozitorijume koji menjaju perzistenciju podataka i "podižu" dogadjaj kako bi obavestili sve agregate.
 
