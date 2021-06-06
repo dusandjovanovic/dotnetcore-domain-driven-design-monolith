@@ -97,15 +97,14 @@ namespace DDDMedical.Domain.Models
 
 1. Konsultacija traje jedan dan i prema tome, lekar može imati jednu konsultaciju dnevno.
 2. U zavisnosti od tipa pacijenta, konsultacija može biti dodeljena samo odredjenom tipu lekara. `Covid19Patient` pacijenti moraju biti dodeljeni lekarima tipa `Pulmonologist`. Suprotno važi za preostalo uparivanje tipova.
-3. Jedna soba za lečenje može posedovati veći broj mašina.
+3. Jedna soba za lečenje može posedovati jednu mašinu (ili nijednu).
 4. Kako bi konsultacija za `Covid19Patient` pacijente bila dozvoljena, neophodno je da soba za lečenje poseduje bar jednu mašinu.
-5. Ukoliko više pacijenata zakazuje konsultacije istog dana (kod različitih lekara), neophodno je da soba za lečenje poseduje dovoljan broj slobodnih mašina `num(Covid19Patient)x1`.
-6. Svi atributi lekara/pacijenata/soba/mašina su neophodni prilikom njihovog dodavanja u sistem.
-7. Prilikom brisanja lekara iz sistema, neophodno je da lekar nema zakazane konsultacije u budućnosti.
-8. Prilikom brisanja soba/mašina za lečenje iz sistema, takodje je neophodno da nemaju zakazane rezervacije u budućnosti.
-9. Prilikom dodavanja lekara u sistem, neophodno je da entitet poseduje jedinstvenu e-mail adresu.
-10. Prilikom dodavanja pacdijenata u sistem, takodje je neophodno da entitet poseduje jedinstvenu e-mail adresu.
-11. Prilikom dodavanja soba/mašina za lečenje, neophodno je da entiteti poseduju jedinstvena imena.
+5. Svi atributi lekara/pacijenata/soba/mašina su neophodni prilikom njihovog dodavanja u sistem.
+6. Prilikom brisanja lekara iz sistema, neophodno je da lekar nema zakazane konsultacije u budućnosti.
+7. Prilikom brisanja soba/mašina za lečenje iz sistema, takodje je neophodno da nemaju zakazane rezervacije u budućnosti.
+8. Prilikom dodavanja lekara u sistem, neophodno je da entitet poseduje jedinstvenu e-mail adresu.
+9. Prilikom dodavanja pacijenata u sistem, takodje je neophodno da entitet poseduje jedinstvenu e-mail adresu.
+10. Prilikom dodavanja soba/mašina za lečenje, neophodno je da entiteti poseduju jedinstvena imena.
 
 ### Repozitorijumi
 
