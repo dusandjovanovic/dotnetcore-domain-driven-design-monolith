@@ -37,5 +37,16 @@ namespace DDDMedical.Infrastructure.Data.Repository
         {
             return _dbSet.Find(doctorId).Role == Role.GeneralPractitioner;
         }
+
+        public bool isDoctorReservedInTheFuture(Guid doctorId)
+        {
+            List<DateTime> reservations = _dbSet.Find(doctorId).Reservations.Select(r => DateTime.Parse(r).Date).ToList();
+
+            if (reservations.Count == 0)
+                return false;
+            
+            return reservations
+                .All(d => d.Date > DateTime.Now.Date);
+        }
     }
 }

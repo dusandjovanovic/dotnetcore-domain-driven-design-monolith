@@ -12,5 +12,7 @@ namespace DDDMedical.Domain.Interfaces
         bool IsDoctorPulmonologist(Guid doctorId);
         
         bool IsDoctorGeneralPractitioner(Guid doctorId);
+
+        bool isDoctorReservedInTheFuture(Guid doctorId);
     }
 }

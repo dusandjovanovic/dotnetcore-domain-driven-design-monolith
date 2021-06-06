@@ -62,6 +62,12 @@ namespace DDDMedical.Domain.CommandHandlers
                 return Task.FromResult(false);
             }
             
+            if (_doctorRepository.isDoctorReservedInTheFuture(request.Id))
+            {
+                _mediator.RaiseEvent(new DomainNotification(request.MessageType, "Doctor's timetable has to be cleared first."));
+                return Task.FromResult(false);
+            }
+            
             _doctorRepository.Remove(request.Id);
 
             if (Commit())
