@@ -9,7 +9,7 @@ namespace DDDMedical.Domain.EventHandlers
     {
         public Task Handle(ConsultationRegisteredEvent notification, CancellationToken cancellationToken)
         {
-            throw new System.NotImplementedException();
+            return Task.CompletedTask;
         }
     }
 }

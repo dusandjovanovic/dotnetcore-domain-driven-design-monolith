@@ -18,12 +18,14 @@ namespace DDDMedical.Domain.CommandHandlers
     {
         private readonly IConsultationRepository _consultationRepository;
         private readonly IDoctorRepository _doctorRepository;
+        private readonly IPatientRepository _patientRepository;
         private readonly ITreatmentRoomRepository _treatmentRoomRepository;
         private readonly IMediatorHandler _mediator;
         
         public ConsultationCommandHandler(
             IConsultationRepository consultationRepository,
             IDoctorRepository doctorRepository,
+            IPatientRepository patientRepository,
             ITreatmentRoomRepository treatmentRoomRepository,
             IUnitOfWork unitOfWork, 
             IMediatorHandler mediator, 
@@ -31,6 +33,7 @@ namespace DDDMedical.Domain.CommandHandlers
         {
             _consultationRepository = consultationRepository;
             _doctorRepository = doctorRepository;
+            _patientRepository = patientRepository;
             _treatmentRoomRepository = treatmentRoomRepository;
             _mediator = mediator;
         }
@@ -53,12 +56,33 @@ namespace DDDMedical.Domain.CommandHandlers
                 return Task.FromResult(false);
             }
 
+            if (_patientRepository.isPatientCovid19(request.PatientId))
+            {
+                if (!_doctorRepository.IsDoctorPulmonologist(request.DoctorId))
+                {
+                    _mediator.RaiseEvent(new DomainNotification(request.MessageType, "Doctor must be a Pulmologist."));
+                    return Task.FromResult(false);
+                }
+
+                if (!_treatmentRoomRepository.isTreatmentRoomEquipped(request.TreatmentRoomId))
+                {
+                    _mediator.RaiseEvent(new DomainNotification(request.MessageType, "Treatment room must not be empty."));
+                    return Task.FromResult(false);
+                }
+            }
+            else
+            {
+                if (!_doctorRepository.IsDoctorGeneralPractitioner(request.DoctorId))
+                {
+                    _mediator.RaiseEvent(new DomainNotification(request.MessageType, "Doctor must be a General practitioner."));
+                    return Task.FromResult(false);
+                }
+            }
+
             _consultationRepository.Add(consultation);
 
             if (!Commit()) return Task.FromResult(true);
             
-            _mediator.RaiseEvent(new ConsultationRegisteredEvent(consultation.Id, consultation.PatientId, consultation.DoctorId, 
-                consultation.TreatmentRoomId, consultation.RegistrationDate, consultation.ConsultationDate));
             _mediator.SendCommand(new ReserveDoctorCommand(consultation.DoctorId, consultation.ConsultationDate, consultation.Id));
             _mediator.SendCommand(new ReserveTreatmentRoomCommand(consultation.TreatmentRoomId,
                 consultation.ConsultationDate, treatmentRoom.TreatmentMachineId));

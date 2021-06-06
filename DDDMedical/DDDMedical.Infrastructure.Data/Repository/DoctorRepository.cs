@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using DDDMedical.Domain.Interfaces;
 using DDDMedical.Domain.Models;
@@ -18,8 +19,13 @@ namespace DDDMedical.Infrastructure.Data.Repository
 
         public bool IsDoctorReservedByHour(Guid doctorId, DateTime reservationDate)
         {
-            return _dbSet.Find(doctorId).Reservations
-                .TrueForAll(d => DateTime.Parse(d).Date != reservationDate.Date);
+            List<DateTime> reservations = _dbSet.Find(doctorId).Reservations.Select(r => DateTime.Parse(r).Date).ToList();
+
+            if (reservations.Count == 0)
+                return false;
+            
+            return reservations
+                .Any(d => d.Date == reservationDate.Date);
         }
 
         public bool IsDoctorPulmonologist(Guid doctorId)

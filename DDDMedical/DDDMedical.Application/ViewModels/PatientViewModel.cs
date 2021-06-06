@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using DDDMedical.Domain.Models;
 
 namespace DDDMedical.Application.ViewModels
 {
@@ -25,5 +26,7 @@ namespace DDDMedical.Application.ViewModels
         [DataType(DataType.Date, ErrorMessage = "Invalid format")]
         [DisplayName("Registration date")]
         public DateTime RegistrationDate { get; set; }
+        
+        public PatientType PatientType { get; set; }
     }
 }

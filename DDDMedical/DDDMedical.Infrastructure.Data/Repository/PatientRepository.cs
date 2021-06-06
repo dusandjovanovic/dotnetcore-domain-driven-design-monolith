@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using DDDMedical.Domain.Interfaces;
 using DDDMedical.Domain.Models;
@@ -13,6 +14,16 @@ namespace DDDMedical.Infrastructure.Data.Repository
         public Patient GetByEmail(string email)
         {
             return _dbSet.AsNoTracking().FirstOrDefault(c => c.Email == email);
+        }
+
+        public bool isPatientCovid19(Guid patientId)
+        {
+            return _dbSet.Find(patientId).PatientType == PatientType.COVID19;
+        }
+
+        public bool isPatientInfluenza(Guid patientId)
+        {
+            return _dbSet.Find(patientId).PatientType == PatientType.INFLUENZA;
         }
     }
 }
