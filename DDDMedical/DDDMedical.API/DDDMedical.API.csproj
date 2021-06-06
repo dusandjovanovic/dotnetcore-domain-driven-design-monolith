@@ -9,7 +9,6 @@
     <ItemGroup>
       <ProjectReference Include="..\DDDMedical.Application\DDDMedical.Application.csproj" />
       <ProjectReference Include="..\DDDMedical.Infrastructure.Bus\DDDMedical.Infrastructure.Bus.csproj" />
-      <ProjectReference Include="..\DDDMedical.Infrastructure.Identity\DDDMedical.Infrastructure.Identity.csproj" />
       <ProjectReference Include="..\DDDMedical.Infrastructure.Injector\DDDMedical.Infrastructure.Injector.csproj" />
     </ItemGroup>
 

@@ -24,7 +24,6 @@ namespace DDDMedical.API
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddCustomizedDatabase(Configuration, _env);
-            services.AddCustomizedAuth(Configuration);
             services.AddCustomizedHttp(Configuration);
             services.AddMapperSetup();
             services.AddMediatR(typeof(Startup));
@@ -45,7 +44,6 @@ namespace DDDMedical.API
                 .AllowAnyOrigin()
                 .AllowAnyMethod()
                 .AllowAnyHeader());
-            app.UseCustomizedAuth();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();

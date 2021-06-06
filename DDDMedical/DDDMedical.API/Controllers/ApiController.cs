@@ -61,13 +61,5 @@ namespace DDDMedical.API.Controllers
         {
             _mediator.RaiseEvent(new DomainNotification(code, message));
         }
-
-        protected void AddIdentityErrors(IdentityResult result)
-        {
-            foreach (var error in result.Errors)
-            {
-                NotifyError(result.ToString(), error.Description);
-            }
-        }
     }
 }

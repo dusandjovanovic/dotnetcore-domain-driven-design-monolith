@@ -3,7 +3,6 @@ using DDDMedical.Application.Interfaces;
 using DDDMedical.Application.ViewModels;
 using DDDMedical.Domain.Core.Bus;
 using DDDMedical.Domain.Core.Notifications;
-using DDDMedical.Infrastructure.Identity.Authorization;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
