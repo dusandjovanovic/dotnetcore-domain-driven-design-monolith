@@ -131,6 +131,23 @@ namespace DDDMedical.Domain.Interfaces
 
 A zatim, konkretni repozitorijumi implementiraju posebnu poslovnu logiku, tačnije **logiku domena**. Na primeru repozitorijuma za upravljanje lekarima postoje osnovna pravila domena koja se zadaju dodatnim metodama u vidu provere dostupnosti lekara.
 
+```csharp
+public interface IDoctorRepository : IRepository<Doctor>
+{
+    Doctor GetByEmail(string email);
+
+    bool IsDoctorReservedByHour(Guid doctorId, DateTime reservationDate);
+
+    bool IsDoctorPulmonologist(Guid doctorId);
+
+    bool IsDoctorGeneralPractitioner(Guid doctorId);
+
+    bool isDoctorReservedInTheFuture(Guid doctorId);
+}
+```
+
+Mogu se videti ekstenzije generičkog repozitorijuma, poput `IsDoctorReservedByHour`. Ove metode se koriste prilikom izvršavanja `CommandHandler-a` i garantuju održavanje pravila domena.
+
 ### Dogadjaji domena
 Dogadjaji se koriste kako bi se eksplicitno implementirali efekti nad agregatima. Generalno, za svak iskup agregata postoji po nekoliko dogadjaja koji mogu nastupiti.
 
